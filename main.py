@@ -1,7 +1,6 @@
 import requests
 import sqlite3
 import os
-import time
 import json
 import flet as ft
 
@@ -181,74 +180,113 @@ def back_to_main(page):
 
     # Layout structure
     page.add(
-        ft.Column(
+        ft.Row(
             [
-                ft.Container(
-                    ft.Text("天気予報", size=24, weight="bold", color=ft.colors.WHITE),
-                    padding=20,
-                    bgcolor=ft.colors.BLUE,
-                    alignment=ft.alignment.center_left,
+                # Left Sidebar with dropdowns and buttons
+                ft.Column(
+                    [
+                        ft.Container(
+                            ft.Text("地域を選択", size=18),
+                            padding=10,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        dropdown,
+                        ft.Container(
+                            ft.Text("サブ地域を選択", size=18),
+                            padding=10,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        dropdown_children,
+                        ft.ElevatedButton(text="Past Data", on_click=lambda e: show_past_data(e, page)),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                    width=200,
                 ),
-                dropdown,
-                dropdown_children,
-                ft.Container(
-                    content=weather_info,
-                    padding=20,
-                    bgcolor=ft.colors.BLUE_50,
-                    border_radius=ft.border_radius.all(8),
+                # Right section for displaying weather info
+                ft.Column(
+                    [
+                        ft.Container(
+                            ft.Text("天気予報", size=24, weight="bold", color=ft.colors.WHITE),
+                            padding=20,
+                            bgcolor=ft.colors.BLUE,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        ft.Container(
+                            content=weather_info,
+                            padding=20,
+                            bgcolor=ft.colors.BLUE_50,
+                            border_radius=ft.border_radius.all(8),
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                    width=400,
                 ),
-            ],
-            spacing=20,
-            width=600,
+            ]
         )
     )
     page.update()
 
-def main(page: ft.Page):
-    page.title = "天気予報検索"
-    page.horizontal_alignment = ft.CrossAxisAlignment.START
-    page.vertical_alignment = ft.MainAxisAlignment.START
+def main(page):
+    # Return to the main page layout
+    page.controls.clear()
 
-    # Text box for displaying weather info
+    # Add the dropdowns and weather info section back
     weather_info = ft.Text(value="地域を選択してください", size=16)
-
-    # Dropdown for selecting a region
     dropdown = ft.Dropdown(
         hint_text="地域を選択",
         options=[ft.dropdown.Option(text=name, key=code) for name, code in REGIONS.items()],
         on_change=lambda e: update_children(e.control.value, dropdown_children, page)
     )
-
-    # Dropdown for selecting sub-regions (children)
     dropdown_children = ft.Dropdown(hint_text="サブ地域を選択")
     dropdown_children.on_change = lambda e: update_weather(e.control.value, weather_info, page)
 
     # Layout structure
     page.add(
-        ft.Column(
+        ft.Row(
             [
-                ft.Container(
-                    ft.Text("天気予報", size=24, weight="bold", color=ft.colors.WHITE),
-                    padding=20,
-                    bgcolor=ft.colors.BLUE,
-                    alignment=ft.alignment.center_left,
+                # Left Sidebar with dropdowns and buttons
+                ft.Column(
+                    [
+                        ft.Container(
+                            ft.Text("地域を選択", size=18),
+                            padding=10,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        dropdown,
+                        ft.Container(
+                            ft.Text("サブ地域を選択", size=18),
+                            padding=10,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        dropdown_children,
+                        ft.ElevatedButton(text="Past Data", on_click=lambda e: show_past_data(e, page)),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                    width=200,
                 ),
-                dropdown,
-                dropdown_children,
-                ft.Container(
-                    content=weather_info,
-                    padding=20,
-                    bgcolor=ft.colors.BLUE_50,
-                    border_radius=ft.border_radius.all(8),
+                # Right section for displaying weather info
+                ft.Column(
+                    [
+                        ft.Container(
+                            ft.Text("天気予報", size=24, weight="bold", color=ft.colors.WHITE),
+                            padding=20,
+                            bgcolor=ft.colors.BLUE,
+                            alignment=ft.alignment.center_left,
+                        ),
+                        ft.Container(
+                            content=weather_info,
+                            padding=20,
+                            bgcolor=ft.colors.BLUE_50,
+                            border_radius=ft.border_radius.all(8),
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,
+                    width=400,
                 ),
-            ],
-            spacing=20,
-            width=600,
+            ]
         )
     )
-
-    past_data_button = ft.ElevatedButton(text="Past Data", on_click=lambda e: show_past_data(e, page))
-    page.add(past_data_button)
+    page.update()
 
 # Run the application
 ft.app(target=main)
